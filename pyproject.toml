@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dsp-av2"
+version = "0.1.0"
+description = "Resolução computacional dos exercícios P7.9–P7.16 e P8.12–P8.15 (Ingle & Proakis, DSP Using MATLAB, 3ª ed.)"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.26",
+    "scipy>=1.11",
+    "matplotlib>=3.8",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "nbformat>=5",
+    "nbconvert>=7",
+    "ipykernel>=6",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [".", "src"]

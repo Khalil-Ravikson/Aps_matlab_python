@@ -1,0 +1,11 @@
+N = 6 (valor real 5.1716); Ωc = 632.7668 rad/s
+B(s) = [6.418923e+16]
+A(s) = [1.000000e+00 2.444823e+03 2.988580e+06 2.316084e+09 1.196609e+12
+ 3.919424e+14 6.418923e+16]
+Validação P8.12
+  [OK  ] Perda máx. na passagem [dB]: 0.2500 <= 0.2500  (folga +0.0000)
+  [OK  ] Atenuação mín. na rejeição [dB]: 59.9744 >= 50.0000  (folga +9.9744)
+  [OK  ] Atenuação em Ωs com N−1 = 5 [dB] (deve falhar): 47.9332 <= 50.0000  (folga +2.0668)
+  Resultado: ATENDE à especificação
+Figura: /mnt/storage/projects/dsp-avaliacao-2/results/p8_12/overview.png
+Métricas: /mnt/storage/projects/dsp-avaliacao-2/results/p8_12/metrics.json

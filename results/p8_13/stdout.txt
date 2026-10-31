@@ -1,0 +1,15 @@
+N = 9 (valor real 8.9917); Ωc = 70621.0233 rad/s (11239.68 Hz)
+Ganho global G = 1
+  num = [70621.023296]  den = [1.000000e+00 7.062102e+04]
+  num = [4.987329e+09]  den = [1.000000e+00 1.327241e+05 4.987329e+09]
+  num = [4.987329e+09]  den = [1.000000e+00 1.081977e+05 4.987329e+09]
+  num = [4.987329e+09]  den = [1.000000e+00 7.062102e+04 4.987329e+09]
+  num = [4.987329e+09]  den = [1.000000e+00 2.452642e+04 4.987329e+09]
+θ_k (graus) = [20. 40. 60. 80.]
+Validação P8.13
+  [OK  ] Perda máx. na passagem [dB]: 0.5000 <= 0.5000  (folga +0.0000)
+  [OK  ] Atenuação mín. na rejeição [dB]: 45.0498 >= 45.0000  (folga +0.0498)
+  [OK  ] Atenuação em Ωs com N−1 = 8 [dB] (deve falhar): 39.0296 <= 45.0000  (folga +5.9704)
+  Resultado: ATENDE à especificação
+Figura: /mnt/storage/projects/dsp-avaliacao-2/results/p8_13/overview.png
+Métricas: /mnt/storage/projects/dsp-avaliacao-2/results/p8_13/metrics.json

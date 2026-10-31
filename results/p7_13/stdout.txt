@@ -1,0 +1,16 @@
+A_s = 46.0206 dB; β = 4.0909; Δω = 0.1π; ωc = (0.3, 0.7)
+Estimativa de Kaiser: M = 55
+Validação P7.13 (Tipo 1 de fase linear)
+  [OK  ] ||H| − 1| em [0π, 0.25π]: 0.0052 <= 0.0250  (folga +0.0198)
+  [FALHA] ||H| − 0| em [0.35π, 0.65π]: 0.0059 <= 0.0050  (folga -0.0009)
+  [OK  ] ||H| − 1| em [0.75π, 1π]: 0.0052 <= 0.0250  (folga +0.0198)
+  Resultado: NÃO ATENDE
+
+Busca (M, atende?): ((51, False), (53, False), (55, False), (57, True))
+Validação P7.13 (Tipo 1 de fase linear)
+  [OK  ] ||H| − 1| em [0π, 0.25π]: 0.0039 <= 0.0250  (folga +0.0211)
+  [OK  ] ||H| − 0| em [0.35π, 0.65π]: 0.0037 <= 0.0050  (folga +0.0013)
+  [OK  ] ||H| − 1| em [0.75π, 1π]: 0.0039 <= 0.0250  (folga +0.0211)
+  Resultado: ATENDE à especificação
+Figura: /mnt/storage/projects/dsp-avaliacao-2/results/p7_13/overview.png
+Métricas: /mnt/storage/projects/dsp-avaliacao-2/results/p7_13/metrics.json

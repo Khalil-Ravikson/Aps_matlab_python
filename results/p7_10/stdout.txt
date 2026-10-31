@@ -1,0 +1,9 @@
+Δω = 0.1π; ωc = ['0.35π', '0.65π']; M = 67 (Tabela 7.1: 67); α = 33
+Validação P7.10 (Tipo 1 de fase linear)
+  [OK  ] Rp [dB] (grade livro): 0.0435 <= 0.2000  (folga +0.1565)
+  [OK  ] As [dB] (grade livro): 50.0439 >= 50.0000  (folga +0.0439)
+  [OK  ] Rp [dB] (grade densa): 0.0436 <= 0.2000  (folga +0.1564)
+  [OK  ] As [dB] (grade densa): 50.0440 >= 50.0000  (folga +0.0440)
+  Resultado: ATENDE à especificação
+Figura: /mnt/storage/projects/dsp-avaliacao-2/results/p7_10/overview.png
+Métricas: /mnt/storage/projects/dsp-avaliacao-2/results/p7_10/metrics.json

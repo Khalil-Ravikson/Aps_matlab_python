@@ -1,0 +1,11 @@
+ε = 0.508847; N = 8 (valor real 7.4034); H(0) = 0.891251
+B(s) = [1535333.381531]
+A(s) = [1.000000e+00 9.198113e+00 2.423026e+02 1.655156e+03 1.836902e+04
+ 8.468243e+04 4.478257e+05 1.073447e+06 1.722672e+06]
+Validação P8.14
+  [OK  ] Perda máx. na passagem [dB]: 1.0000 <= 1.0000  (folga +0.0000)
+  [OK  ] Atenuação mín. na rejeição [dB]: 54.9872 >= 50.0000  (folga +4.9872)
+  [OK  ] Atenuação em Ωs com N−1 = 7 [dB] (deve falhar): 46.6278 <= 50.0000  (folga +3.3722)
+  Resultado: ATENDE à especificação
+Figura: /mnt/storage/projects/dsp-avaliacao-2/results/p8_14/overview.png
+Métricas: /mnt/storage/projects/dsp-avaliacao-2/results/p8_14/metrics.json

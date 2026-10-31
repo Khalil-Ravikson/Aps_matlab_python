@@ -1,0 +1,13 @@
+A_s = 60.00 dB; β = 5.65326; ωc = (0.35, 0.75); estimativa M = 74
+Busca Kaiser (M, atende?): ((69, False), (70, False), (71, False), (72, True))
+Validação P7.15 (Tipo 2 de fase linear)
+  [OK  ] ||H| − 1| em [0π, 0.3π]: 0.0010 <= 0.0100  (folga +0.0090)
+  [OK  ] ||H| − 0.5| em [0.4π, 0.7π]: 0.0009 <= 0.0050  (folga +0.0041)
+  [OK  ] ||H| − 0| em [0.8π, 1π]: 0.0009 <= 0.0010  (folga +0.0001)
+  Resultado: ATENDE à especificação
+
+Equiripple (remez): M mínimo = 49; últimos: [(47, False, np.float64(58.05)), (48, False, np.float64(59.06)), (49, True, np.float64(60.48))]
+Exemplo 7.26 (livro): M = 49
+Kaiser/Parks-McClellan = 72/49 = 1.469
+Figura: /mnt/storage/projects/dsp-avaliacao-2/results/p7_15/overview.png
+Métricas: /mnt/storage/projects/dsp-avaliacao-2/results/p7_15/metrics.json

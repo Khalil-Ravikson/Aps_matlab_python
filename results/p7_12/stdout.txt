@@ -1,0 +1,13 @@
+hann     : A_s tabela = 44 dB < 50 dB → descartada
+hamming  : M = 35, Rp = 0.04013 dB, As = 51.98 dB → não atende
+blackman : M = 57, Rp = 0.00296 dB, As = 75.25 dB → ATENDE
+
+Escolhida: blackman; M = 57 (Tabela 7.1: 56); α = 28
+Validação P7.12 (Tipo 1 de fase linear)
+  [OK  ] Rp [dB] (grade livro): 0.0030 <= 0.0040  (folga +0.0010)
+  [OK  ] As [dB] (grade livro): 75.2774 >= 50.0000  (folga +25.2774)
+  [OK  ] Rp [dB] (grade densa): 0.0030 <= 0.0040  (folga +0.0010)
+  [OK  ] As [dB] (grade densa): 75.2530 >= 50.0000  (folga +25.2530)
+  Resultado: ATENDE à especificação
+Figura: /mnt/storage/projects/dsp-avaliacao-2/results/p7_12/overview.png
+Métricas: /mnt/storage/projects/dsp-avaliacao-2/results/p7_12/metrics.json
