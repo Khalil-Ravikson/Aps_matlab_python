@@ -1,0 +1,8 @@
+# Dependências da aplicação DSP Filter Lab e do relatório PDF (além de requirements.txt).
+# O PDF também requer o navegador Chromium (ou Google Chrome) instalado no sistema.
+-r requirements.txt
+streamlit>=1.40
+plotly>=5.20
+latex2mathml>=3.77
+markdown>=3.5
+pypdf>=4.0

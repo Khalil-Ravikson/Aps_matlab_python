@@ -3,7 +3,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 .venv/bin/python tools/build_notebooks.py "$@"
-names=("$@"); [ ${#names[@]} -eq 0 ] && names=($(ls tools/nb/p*.py | xargs -n1 basename | sed 's/\.py$//'))
+names=("$@"); [ ${#names[@]} -eq 0 ] && names=($(ls tools/nb/p[0-9]*.py | xargs -n1 basename | sed 's/\.py$//'))
 for n in "${names[@]}"; do
   .venv/bin/jupyter nbconvert --to notebook --execute --inplace "notebooks/$n.ipynb" 2>&1 | grep -E "Writing|Error" || true
 done

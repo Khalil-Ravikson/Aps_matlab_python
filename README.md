@@ -6,6 +6,32 @@ Ingle & Proakis, *Digital Signal Processing Using MATLAB*, 3ª ed.
 - Especificações: [`docs/documento_transferencia_academica.md`](docs/documento_transferencia_academica.md)
 - Plano, decisões e verificação independente: [`docs/plano_implementacao.md`](docs/plano_implementacao.md)
 
+## DSP Filter Lab (aplicação web educacional)
+
+Aplicação Streamlit que apresenta cada exercício como um capítulo de livro didático: enunciado, explicação, dados, teoria, equações, resolução passo a passo, implementação, gráficos interativos, verificação e conclusão. Plano em [`docs/plano_aplicacao.md`](docs/plano_aplicacao.md).
+
+**Estado:** esqueleto completo e os pilotos **P7.13** (FIR) e **P8.13** (IIR) prontos. Os outros 10 exercícios aparecem na navegação como "em breve" e aguardam a aprovação dos pilotos.
+
+```bash
+.venv/bin/pip install -e ".[app,dev]"          # ou: pip install -r requirements-app.txt
+.venv/bin/streamlit run app/streamlit_app.py   # abre em http://localhost:8501
+```
+
+**Relatório PDF** (mesmo conteúdo da aplicação; requer Chromium instalado):
+
+```bash
+.venv/bin/python -m report.build_report        # gera report/out/relatorio.pdf
+```
+
+Camadas:
+
+| Caminho | Papel |
+|---|---|
+| `content/` | **Fonte única** do texto didático (aplicação, PDF e notebooks). Números entram por marcadores `[[chave]]`, preenchidos pelo núcleo |
+| `app/` | Interface Streamlit: navegação, página padronizada de exercício, figuras Plotly, modo Explore |
+| `report/` | Geração do relatório: HTML + MathML → PDF (Chromium), com sumário paginado |
+| `tests/golden/results.json` | Resultados oficiais congelados (commit `70c8e0c`); `tests/test_regression.py` garante que nada mudou |
+
 ## Estrutura
 
 | Caminho | Conteúdo |
@@ -39,7 +65,7 @@ Envie o projeto (zip ou Google Drive) para `/content/dsp-avaliacao-2` e abra um 
 
 ## Resultados
 
-Todos os 12 exercícios atendem à especificação do enunciado (verificação em `tests/`; 181 testes).
+Todos os 12 exercícios atendem à especificação do enunciado (verificação em `tests/`; 224 testes, incluindo regressão, consistência do conteúdo, interface e relatório).
 
 | Ex. | Filtro | Método | Resultado | Observação |
 |---|---|---|---|---|

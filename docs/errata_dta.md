@@ -10,7 +10,7 @@ Legenda: ❌ erro que muda a resposta · ⚠️ erro de valor ou de raciocínio 
 
 | # | Ex. | Afirmação do DTA | Correção | Evidência |
 |---|---|---|---|---|
-| E1 | P7.13 | "$M_{mínimo} = 55$" | **M = 57.** Com M = 55, $\max|H|$ na rejeição é 0.0059 > 0.005, e a especificação é violada. A fórmula de Kaiser é só uma estimativa | `tests/test_p7_13.py::test_kaiser_estimate_fails_the_stopband_tolerance`, `::test_minimum_length_is_57` |
+| E1 | P7.13 | "$M_{mínimo} = 55$" | **M = 57.** Com M = 55, $\max\lvert H\rvert$ na rejeição é 0.0059 > 0.005, e a especificação é violada. A fórmula de Kaiser é só uma estimativa | `tests/test_p7_13.py::test_kaiser_estimate_fails_the_stopband_tolerance`, `::test_minimum_length_is_57` |
 | E2 | P7.14 | "$M = 46 \to 47$ (Tipo 1)" | **M = 46 (Tipo 2).** O passa-faixa não exige M ímpar: o zero do Tipo 2 em ω = π cai na rejeição | `tests/test_p7_14.py::test_minimum_length_is_46_type_2` |
 | E3 | P7.15 | "$M = 74 \to 75$" | **M = 72.** M par é admissível (ganho 0 em π), e a busca medida encontra 72 | `tests/test_p7_15.py::test_minimum_length_is_72` |
 | E4 | P7.15 | "O método Equiripple reduz a ordem … em aproximadamente 35%" | Com M = 72, Kaiser é **47% mais longo** que o equiripple (72/49). Os 35% do DTA são $1 - 49/75$, uma redução calculada a partir do Kaiser e com o M errado | `notebooks/p7_15.ipynb`, §4 |

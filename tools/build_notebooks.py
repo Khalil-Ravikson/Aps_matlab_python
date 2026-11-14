@@ -16,11 +16,11 @@ from pathlib import Path
 import nbformat as nbf
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "tools"))
+sys.path[:0] = [str(ROOT / "tools"), str(ROOT), str(ROOT / "src")]
 
 
 def available():
-    return sorted(p.stem for p in (ROOT / "tools" / "nb").glob("p*.py"))
+    return sorted(p.stem for p in (ROOT / "tools" / "nb").glob("p[0-9]*.py"))
 
 
 def build(name: str) -> Path:

@@ -1,0 +1,58 @@
+/* DSP Filter Lab — identidade visual (livro técnico) */
+
+.block-container { max-width: 980px; padding-top: 2.2rem; }
+
+h1, h2, h3 { letter-spacing: -0.01em; }
+h2 { margin-top: 2.2rem !important; padding-bottom: .35rem; border-bottom: 1px solid #e2e0da; }
+
+/* Cabeçalho do exercício */
+.ex-header { margin-bottom: .6rem; }
+.ex-number { font-size: .95rem; color: #5a5953; font-weight: 600; letter-spacing: .04em; }
+.ex-tagline { color: #5a5953; font-size: .95rem; margin-top: -.4rem; }
+.chapter { color: #fff; font-size: .75rem; font-weight: 600; padding: .18rem .55rem;
+           border-radius: 4px; letter-spacing: .03em; margin-right: .5rem; }
+
+/* Rótulos de origem dos valores */
+.kind { display: inline-flex; align-items: center; gap: .3rem; font-size: .74rem; font-weight: 600;
+        color: #1c1c1a; border-left: 3px solid; padding: .1rem .45rem; border-radius: 3px;
+        white-space: nowrap; }
+.kind-icon { font-size: .8rem; }
+.legend { display: flex; flex-wrap: wrap; gap: .4rem; margin: .3rem 0 .8rem 0; }
+
+/* Indicadores de atendimento */
+.status { font-weight: 700; font-size: .8rem; padding: .12rem .5rem; border-radius: 3px; white-space: nowrap; }
+.status.ok { color: #0b5e3d; background: #e3f4ec; }
+.status.fail { color: #9b1c1c; background: #fbe7e7; }
+
+/* Cartões de resultado oficial */
+.hl-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: .7rem; margin: .8rem 0 1rem 0; }
+.hl-card { border: 1px solid #e2e0da; border-radius: 6px; padding: .7rem .85rem; background: #fff; }
+.hl-label { font-size: .78rem; color: #5a5953; }
+.hl-value { font-size: 1.35rem; font-weight: 700; color: #1c1c1a; line-height: 1.35; }
+
+/* Enunciado original */
+.statement { border-left: 4px solid #bdbab1; background: #f6f5f1; padding: .9rem 1.1rem;
+             font-family: Georgia, "Source Serif Pro", serif; font-style: italic; color: #2b2a27; border-radius: 0 4px 4px 0; }
+.statement-src { font-size: .8rem; color: #5a5953; margin-top: .35rem; }
+
+/* Faixas Explore e errata */
+.explore-banner { border: 1px dashed #b07800; background: #fdf6e6; padding: .6rem .9rem; border-radius: 6px;
+                  font-size: .9rem; color: #5c3f00; }
+.errata { border-left: 4px solid #9b1c1c; background: #fdf3f3; padding: .7rem 1rem; border-radius: 0 4px 4px 0; }
+.note { border-left: 4px solid #b07800; background: #fdf8ec; padding: .6rem .9rem; border-radius: 0 4px 4px 0; }
+
+/* Índice das seções */
+.toc { display: flex; flex-wrap: wrap; gap: .3rem .9rem; font-size: .85rem; margin: .2rem 0 1rem 0; }
+.toc a { color: #1f5fae; text-decoration: none; }
+
+/* Tabelas */
+table { font-size: .9rem; }
+
+@media (max-width: 640px) {
+  .block-container { padding-left: 1rem; padding-right: 1rem; }
+  .hl-value { font-size: 1.1rem; }
+}
+
+/* Links de página (exercícios prontos): mesma escala do texto e destaque de cor */
+[data-testid="stPageLink"] a { padding-left: 0; }
+[data-testid="stPageLink"] p { font-size: 1rem !important; font-weight: 600; color: #1f5fae; }

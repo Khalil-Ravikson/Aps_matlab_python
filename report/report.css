@@ -1,0 +1,82 @@
+/* DSP Filter Lab — relatório acadêmico (impressão A4 pelo Chromium) */
+
+@page {
+  size: A4;
+  margin: 22mm 20mm 22mm 22mm;
+  @bottom-right { content: counter(page); font: 9pt "Liberation Serif", serif; color: #555; }
+  @bottom-left { content: "DSP Filter Lab — Ingle & Proakis, Caps. 7 e 8"; font: 8pt "Liberation Sans", sans-serif; color: #888; }
+}
+@page :first { @bottom-right { content: none; } @bottom-left { content: none; } }
+
+html { font-family: "Liberation Serif", "DejaVu Serif", serif; font-size: 10.8pt; line-height: 1.45; color: #1c1c1a; }
+math { font-family: "DejaVu Math TeX Gyre", "Latin Modern Math", serif; font-size: 1.05em; }
+h1, h2, h3, .chap-tag, .eqname, .step-h, th, .kind, .cv-top, .cv-sub, .toc { font-family: "Liberation Sans", "Noto Sans", sans-serif; }
+h1 { font-size: 17pt; margin: 0 0 4pt 0; color: #14304f; break-after: avoid; }
+h2 { font-size: 12.5pt; margin: 16pt 0 5pt 0; padding-bottom: 2pt; border-bottom: .6pt solid #c9c6bd; color: #14304f; break-after: avoid; }
+h3 { font-size: 10.8pt; margin: 10pt 0 3pt 0; break-after: avoid; }
+p { margin: 4pt 0; text-align: justify; hyphens: auto; }
+code { font-family: "Liberation Mono", monospace; font-size: 8.8pt; }
+
+.chapter { break-before: page; }
+.chap-tag { font-size: 8pt; letter-spacing: .06em; text-transform: uppercase; color: #fff; display: inline-block;
+            padding: 1.5pt 6pt; border-radius: 2pt; background: #14304f; margin-bottom: 6pt; }
+.ch7 .chap-tag { background: #1f5fae; } .ch8 .chap-tag { background: #0f7a5a; }
+.tagline { color: #5a5953; margin-top: 0; font-style: italic; }
+
+/* Capa */
+.cover { height: 245mm; display: flex; flex-direction: column; justify-content: center; }
+.cv-top { font-size: 10pt; letter-spacing: .08em; text-transform: uppercase; color: #5a5953; }
+.cv-title { font-size: 34pt; font-weight: bold; color: #14304f; margin: 10pt 0 6pt 0; }
+.cv-sub { font-size: 13pt; color: #333; max-width: 140mm; }
+.cv-scope { margin-top: 18pt; font-size: 11pt; padding: 6pt 10pt; border-left: 3pt solid #b07800; background: #fdf6e6; }
+.cv-id { margin-top: 30pt; border-collapse: collapse; font-size: 10pt; max-width: 150mm; }
+.cv-id td { padding: 3pt 10pt 3pt 0; vertical-align: top; border-bottom: .4pt solid #ddd; }
+.cv-id td:first-child { color: #5a5953; white-space: nowrap; }
+.cv-date { margin-top: 24pt; font-size: 8.5pt; color: #777; }
+
+/* Sumário */
+.toc { break-before: page; }
+.toc-h { margin-bottom: 12pt; }
+.toc-l1, .toc-l2 { display: flex; align-items: baseline; }
+.toc-l1 { font-weight: bold; margin-top: 7pt; font-size: 10.5pt; }
+.toc-l2 { margin-left: 14pt; font-size: 9.8pt; color: #333; }
+.toc a { color: inherit; text-decoration: none; }
+.dots { flex: 1; border-bottom: .8pt dotted #aaa; margin: 0 4pt; transform: translateY(-3pt); }
+.pg { min-width: 14pt; text-align: right; }
+
+/* Resultado oficial */
+.official { margin-top: 8pt; }
+.hl-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5pt; margin: 4pt 0 10pt 0; break-inside: avoid; }
+.hl { border: .6pt solid #d6d3ca; border-radius: 3pt; padding: 4pt 6pt; }
+.hl-sym { font-size: 9pt; } .hl-val { font-size: 13pt; font-weight: bold; } .hl-lab { font-size: 8pt; color: #5a5953; }
+
+/* Blocos */
+.statement { margin: 4pt 0; padding: 7pt 10pt; border-left: 3pt solid #bdbab1; background: #f6f5f1; font-style: italic; }
+.src { font-size: 8.5pt; color: #5a5953; }
+.eq { margin: 6pt 0; text-align: center; }
+.eqbox { border: .6pt solid #d6d3ca; border-radius: 3pt; padding: 5pt 9pt; margin: 6pt 0; break-inside: avoid; }
+.eqname { font-weight: bold; font-size: 9.5pt; } .ref { font-weight: normal; color: #5a5953; }
+.step { border: .6pt solid #d6d3ca; border-left: 3pt solid #1f5fae; border-radius: 3pt; padding: 5pt 9pt; margin: 7pt 0; break-inside: avoid; }
+.ch8 .step { border-left-color: #0f7a5a; }
+.step-h { font-weight: bold; font-size: 10pt; } .step-h span { color: #1f5fae; margin-right: 4pt; }
+.ch8 .step-h span { color: #0f7a5a; }
+.note { border-left: 3pt solid #b07800; background: #fdf8ec; padding: 3pt 8pt; margin-top: 4pt; font-size: 9.8pt; }
+.deep { border: .6pt dashed #c9c6bd; padding: 4pt 9pt; margin: 6pt 0; break-inside: avoid; font-size: 10pt; }
+.deep-t { font-weight: bold; font-family: "Liberation Sans", sans-serif; font-size: 9.5pt; color: #5a5953; }
+.errata { border-left: 3pt solid #9b1c1c; background: #fdf3f3; padding: 5pt 9pt; margin-top: 8pt; font-size: 10pt; break-inside: avoid; }
+
+/* Tabelas */
+table { border-collapse: collapse; margin: 5pt 0; font-size: 9.2pt; break-inside: avoid; }
+th { background: #f1efe9; text-align: left; font-size: 8.5pt; }
+th, td { border: .5pt solid #d6d3ca; padding: 2.5pt 5pt; vertical-align: middle; }
+.kind { border-left: 2.5pt solid; padding: 0 4pt; font-size: 7.5pt; font-weight: bold; white-space: nowrap; background: #faf9f6; }
+.ok { color: #0b5e3d; font-weight: bold; white-space: nowrap; } .fail { color: #9b1c1c; font-weight: bold; white-space: nowrap; }
+.legend { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 6pt; }
+
+/* Figuras */
+figure { margin: 8pt 0; text-align: center; break-inside: avoid; }
+figure svg { max-width: 100%; height: auto; }
+figcaption { font-size: 8.8pt; color: #444; margin-top: 3pt; }
+
+/* Referências */
+.refs li { margin-bottom: 5pt; } .refnote { display: block; font-size: 8.8pt; color: #5a5953; }
