@@ -94,7 +94,20 @@ def values_table(values, ctx) -> str:
             f"</tr></thead><tbody>{rows}</tbody></table>")
 
 
+# Formato das figuras embutidas: "svg" (PDF, vetorial) ou "png" (DOCX, que não aceita SVG em HTML).
+FIGURE_FORMAT = "svg"
+
+
 def svg(fig) -> str:
+    """Figura Matplotlib embutida no HTML (SVG vetorial ou PNG em data URI, conforme FIGURE_FORMAT)."""
+    if FIGURE_FORMAT == "png":
+        import base64
+        buf = io.BytesIO()
+        fig.savefig(buf, format="png", dpi=200, bbox_inches="tight")
+        plt.close(fig)
+        width_in = fig.get_size_inches()[0]
+        return (f'<img src="data:image/png;base64,{base64.b64encode(buf.getvalue()).decode()}" '
+                f'style="width:{min(width_in, 6.3):.2f}in" alt="figura">')
     buf = io.StringIO()
     fig.savefig(buf, format="svg", bbox_inches="tight")
     plt.close(fig)

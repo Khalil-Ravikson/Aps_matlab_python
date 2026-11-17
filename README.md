@@ -14,7 +14,7 @@ O trabalho foi feito em Python (NumPy, SciPy e Matplotlib), e não em MATLAB. As
 O projeto pode ser usado de quatro formas:
 
 1. **Aplicação web (DSP Filter Lab):** cada exercício apresentado como um capítulo de livro didático, com gráficos interativos.
-2. **Relatório em PDF:** o mesmo conteúdo da aplicação, com sumário, equações e figuras.
+2. **Documentos em PDF:** relatório acadêmico, guia de estudo e lista de resoluções, gerados a partir do mesmo conteúdo da aplicação.
 3. **Notebooks Jupyter:** um por exercício, também gerados do mesmo conteúdo.
 4. **Scripts de linha de comando:** um por exercício, que imprimem os resultados e gravam as figuras.
 
@@ -28,7 +28,7 @@ O projeto pode ser usado de quatro formas:
   - [Aplicação web](#1-aplicação-web-dsp-filter-lab)
   - [Testes](#2-testes)
   - [Scripts dos exercícios](#3-scripts-dos-exercícios)
-  - [Relatório em PDF](#4-relatório-em-pdf)
+  - [Documentos em PDF](#4-documentos-em-pdf)
   - [Notebooks](#5-notebooks)
   - [Regenerar tudo de uma vez](#6-regenerar-tudo-de-uma-vez)
   - [Google Colab](#7-google-colab)
@@ -92,7 +92,7 @@ No Windows, troque `.venv/bin/` por `.venv\Scripts\` em todos os comandos deste 
 .venv/bin/python -m pytest -q
 ```
 
-O resultado esperado é `308 passed`.
+O resultado esperado é `310 passed`.
 
 ---
 
@@ -165,21 +165,34 @@ O script imprime os parâmetros calculados e a verificação das especificaçõe
 
 Os identificadores disponíveis são: `p7_09`, `p7_10`, `p7_11`, `p7_12`, `p7_13`, `p7_14`, `p7_15`, `p7_16`, `p8_12`, `p8_13`, `p8_14`, `p8_15`.
 
-### 4. Relatório em PDF
+### 4. Documentos em PDF
 
-Requer o Chromium ou o Google Chrome instalado e acessível no PATH como `chromium`, `chromium-browser` ou `google-chrome`.
+O projeto gera três documentos acadêmicos, em PDF e em Word, todos a partir do mesmo conteúdo validado da aplicação:
+
+| Documento | Comando | Arquivo gerado | Conteúdo |
+|---|---|---|---|
+| Relatório acadêmico | `.venv/bin/python -m report.build_report` | `report/out/relatorio.pdf` | Relatório completo (cerca de 90 páginas): metodologia, os 12 exercícios, comparação FIR × IIR, validação e referências |
+| Guia de estudo | `.venv/bin/python -m report.build_guide` | `report/out/guia_de_estudo.pdf` | Curso curto "do impulso ao filtro" e as 12 resoluções (cerca de 50 páginas) |
+| Lista de resoluções | `.venv/bin/python -m report.build_guide --resolucoes` | `report/out/lista_de_resolucoes.pdf` | Apenas as 12 resoluções passo a passo (cerca de 40 páginas) |
+
+Requisitos para gerar os PDFs:
+
+- as dependências do grupo `app` (`pip install -e ".[app,dev]"` ou `pip install -r requirements-app.txt`), que incluem `latex2mathml`, `markdown` e `pypdf`;
+- o Chromium ou o Google Chrome instalado e acessível no PATH como `chromium`, `chromium-browser` ou `google-chrome`.
+
+Cada geração leva de 30 segundos a 2 minutos. Para gravar em outro lugar, use `--out caminho/arquivo.pdf` em qualquer um dos comandos.
+
+**Versões em Word (DOCX).** Os três documentos também podem ser gerados em `.docx`, com as equações como **equações nativas do Word** (editáveis) e as figuras em PNG. É preciso instalar o grupo opcional `docx`, que traz o pandoc embutido:
 
 ```bash
-.venv/bin/python -m report.build_report
+.venv/bin/pip install -e ".[app,docx]"
+.venv/bin/python -m report.build_docx                    # os três documentos
+.venv/bin/python -m report.build_docx relatorio lista     # apenas alguns (relatorio, guia, lista)
 ```
 
-O arquivo é gravado em `report/out/relatorio.pdf` (cerca de 90 páginas; a geração leva de 1 a 2 minutos). Uma versão pronta também está em `docs/relatorio_dsp_filter_lab.pdf`.
+Os arquivos vão para `report/out/` (`relatorio.docx`, `guia_de_estudo.docx`, `lista_de_resolucoes.docx`). Ao abrir no Word, confirme a atualização dos campos para o sumário ser preenchido. Se o Word não perguntar, clique com o botão direito no sumário e escolha "Atualizar campo".
 
-Para gravar em outro lugar:
-
-```bash
-.venv/bin/python -m report.build_report --out caminho/relatorio.pdf
-```
+**Os PDFs e DOCX não são versionados.** São entregáveis acadêmicos independentes: o repositório contém apenas o código e o conteúdo necessários para reproduzi-los (`.gitignore` bloqueia `*.pdf` e `*.docx`).
 
 ### 5. Notebooks
 
@@ -251,7 +264,7 @@ Alguns resultados divergem do documento de pesquisa usado como referência (por 
 │   ├── pages/              Uma página por seção e por exercício
 │   ├── components/         Página padronizada de exercício, estilo e gráficos Plotly
 │   └── explore/            Modo Explore de cada exercício
-├── content/                Texto didático (fonte única para aplicação, PDF e notebooks)
+├── content/                Texto didático (fonte única para aplicação, PDFs e notebooks), incluindo o curso do guia de estudo
 ├── src/dsp_av2/            Núcleo matemático
 │   ├── specs.py            Enunciados e especificações transcritos
 │   ├── fir/                Respostas ideais, janelas, projeto e análise FIR
@@ -260,11 +273,11 @@ Alguns resultados divergem do documento de pesquisa usado como referência (por 
 │   └── plotting.py         Figuras Matplotlib
 ├── exercises/              Um script por exercício
 ├── notebooks/              Um notebook por exercício (já executados)
-├── report/                 Gerador do relatório em PDF
+├── report/                 Geradores do relatório, do guia e da lista de resoluções (PDF e DOCX)
 ├── results/                Figuras e métricas geradas pelos scripts
 ├── tests/                  Testes automatizados e resultados de referência (golden)
 ├── tools/                  Geração de notebooks e scripts de regeneração
-├── docs/                   Plano, errata, relatório pronto e capturas de tela
+├── docs/                   Plano, errata e capturas de tela
 ├── pyproject.toml          Metadados e dependências
 ├── requirements.txt        Dependências do núcleo
 └── requirements-app.txt    Dependências da aplicação e do relatório
@@ -315,7 +328,6 @@ Execute os comandos a partir da raiz do projeto e confirme que a instalação fo
 | `docs/errata_dta.md` | Divergências encontradas nessa pesquisa, com evidência |
 | `docs/plano_implementacao.md` | Plano, decisões de projeto e verificação independente |
 | `docs/plano_aplicacao.md` | Plano da aplicação web |
-| `docs/relatorio_dsp_filter_lab.pdf` | Relatório completo em PDF |
-| `docs/capturas_exercicios/`, `docs/previa_pilotos/` | Capturas de tela da aplicação e do relatório |
+| `docs/capturas_exercicios/`, `docs/previa_pilotos/` | Capturas de tela da aplicação e de páginas do relatório |
 
 Os números de página do livro citados no projeto vêm da pesquisa prévia e não foram conferidos com o livro físico.

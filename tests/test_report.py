@@ -62,3 +62,32 @@ def test_analysis_chapters_render_in_report():
         text = re.sub(r"<math.*?</math>", "", out, flags=re.S)
         text = re.sub(r"<(style|svg)\b.*?</\1>", "", text, flags=re.S)
         assert "$" not in text
+
+
+def test_study_guide_document_is_complete():
+    from content import tutorial
+    from content.model import fill
+    from report import build_guide as G
+    ctx = tutorial.context()
+    for _, body in tutorial.SECTIONS:
+        assert "[[" not in fill(body, ctx)
+    html, toc = G.document()
+    html = html.replace("\x01", "")
+    assert "[[" not in html
+    text = re.sub(r"<(math|style|svg)\b.*?</\1>", "", html, flags=re.S)
+    assert "$" not in text
+    assert len(toc) == len(tutorial.SECTIONS) + 12
+    assert html.count('class="answer"') == 12
+
+
+def test_docx_has_native_equations_and_figures(tmp_path):
+    pytest.importorskip("pypandoc")
+    import zipfile
+    from report import build_docx
+    out = build_docx.build("lista", tmp_path)
+    z = zipfile.ZipFile(out)
+    xml = z.read("word/document.xml").decode()
+    assert xml.count("<m:oMath") > 100                                   # equações nativas do Word
+    assert len([n for n in z.namelist() if n.startswith("word/media/")]) == 12   # um gráfico por exercício
+    plain = re.sub(r"<[^>]+>", "", re.sub(r"<m:oMath.*?</m:oMath>", "", xml, flags=re.S))
+    assert "[[" not in plain and "$" not in plain
