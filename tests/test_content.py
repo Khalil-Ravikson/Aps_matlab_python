@@ -29,8 +29,8 @@ def ex(request):
     return mod, mod.CONTENT, mod.context()
 
 
-def test_pilots_are_written():
-    assert {"p7_13", "p8_13"} <= set(WRITTEN)
+def test_all_twelve_are_written():
+    assert set(WRITTEN) == {e.id for e in registry.EXERCISES}
 
 
 def test_every_marker_has_a_value(ex):
@@ -129,3 +129,107 @@ def test_p8_13_errata_E6_agrees_with_computation():
     thetas = sorted(np.degrees(np.arccos(s.den[1] / (2 * wc))) for s in o["cascade"].sections if s.order == 2)
     np.testing.assert_allclose(thetas, [k * 180 / ctx["N"] for k in range(1, ctx["n_pairs"] + 1)], atol=1e-9)
     assert rf"k\pi/{ctx['N']}" in errata_items()["E6"].correction
+
+
+# ── Demais exercícios: afirmações do texto e errata ─────────────────────────
+
+def _c(ex_id):
+    return registry.load(ex_id).context()
+
+
+def test_p7_09_claims():
+    c = _c("p7_09")
+    assert c["dw"] == pytest.approx(c["t1"]) and c["t1"] < c["t2"]        # "vale a menor transição"
+    assert c["M"] % 2 == 1 and c["M"] == GOLDEN["P7.9"]["M"]
+    assert abs(c["as_"] - c["As_win"]) < 0.5                             # "coincide com o nominal"
+    assert "44.05" in errata_items()["V5"].correction and f"{c['as_']:.2f}" == "44.05"
+
+
+def test_p7_10_claims():
+    c, o = _c("p7_10"), registry.load("p7_10").objects()
+    assert c["worst_w"] == pytest.approx(0.4) or c["worst_w"] == pytest.approx(0.6)   # pior ponto = borda
+    assert 0 < c["as_margin"] < 0.1
+    assert c["odd_zero"] < 1e-12                                          # coeficientes nulos
+    assert c["as_prev"] < c["As_spec"] and c["Mprev"] == c["M"] - 2      # mínimo ímpar
+    assert c["as_2049"] > c["as_"] + 0.5                                  # grade sem bordas superestima
+    assert f"{c['as_']:.2f} dB" in errata_items()["V1"].correction
+
+
+def test_p7_11_claims():
+    c = _c("p7_11")
+    assert c["M_first"] < c["M"] and c["type_first"] == 2 and c["as_first"] > c["as_"]
+    assert c["worst_w"] == pytest.approx(0.6) or c["worst_w"] == pytest.approx(0.3)
+    assert f"{c['as_']:.2f} dB" in errata_items()["V2"].correction
+
+
+def test_p7_12_claims():
+    c, o = _c("p7_12"), registry.load("p7_12").objects()
+    assert o["final"].window == "blackman"
+    assert all(rp > c["Rp_spec"] for _, rp, _ in o["hamming_rows"])      # Hamming nunca atende Rp
+    assert c["M_table"] % 2 == 0 and c["M"] == c["M_table"] + 1           # paridade
+    assert c["M_bla_first"] < c["M"] and c["rp_bla_first_margin"] < 1e-3
+    assert f"**{c['M_table']}**" in errata_items()["V3"].correction
+
+
+def test_p7_14_claims():
+    c = _c("p7_14")
+    assert c["M"] % 2 == 0 and c["type"] == 2 and c["M"] == c["M_est"] == GOLDEN["P7.14"]["M"]
+    assert abs(c["Hr_pi"]) < 1e-12
+    assert c["dev_hi"] > c["dev_lo"]                                      # faixa crítica: superior
+    assert c["dta_passes"]                                                # "47 também atende"
+    assert f"M = {c['M']}" in errata_items()["E2"].correction
+
+
+def test_p7_15_claims():
+    c = _c("p7_15")
+    assert c["M"] == GOLDEN["P7.15"]["M"] and c["M_pm"] == c["M_book"] == GOLDEN["P7.15"]["remez_M_min"]
+    devs = [c["dev1"], c["dev2"], c["dev3"]]
+    assert max(devs) / min(devs) < 1.2                                     # ondulações ~iguais
+    assert c["best_M"] > c["M_pm"]                                        # ajuste de A_s não basta
+    assert f"M = {c['M']}" in errata_items()["E3"].correction
+    assert f"{c['pct']:.0f}%" in errata_items()["E4"].correction
+    assert f"{c['pct_dta_red']:.0f}%" in errata_items()["E4"].correction
+
+
+def test_p7_16_claims():
+    c = _c("p7_16")
+    assert c["win"] == "Hamming" and c["M_min_ham"] < c["M_min_hann"] < c["M_tab_hann"]
+    assert c["tab_best"] == "Hann"
+    assert f"Hamming, M = {c['M']}" in errata_items()["E5"].correction
+
+
+def test_p8_12_claims():
+    c = _c("p8_12")
+    assert c["N"] % 2 == 0                                                # "N par: sem polo real"
+    assert c["B"] == pytest.approx(c["a0"]) and c["H0"] == pytest.approx(1.0)
+    assert c["att_lower"] < c["As"] <= c["att_ws"]
+    assert c["closest_deg"] == pytest.approx(105.0)
+
+
+def test_p8_14_claims():
+    c = _c("p8_14")
+    assert c["extrema"] == c["N"] + 1
+    assert c["dc"] == pytest.approx(1 / np.sqrt(1 + c["eps"] ** 2))
+    assert c["Nb"] == 2 * c["N"]                                          # "reduz a ordem pela metade"
+    assert c["att_lower"] < c["As"] <= c["att_ws"]
+    assert c["ab_ratio"] < 0.25                                           # "elipse muito achatada"
+
+
+def test_p8_15_claims():
+    from dsp_av2.iir import analysis as ia
+    c, o = _c("p8_15"), registry.load("p8_15").objects()
+    assert c["N"] % 2 == 0 and c["n_sec"] == c["N"] // 2
+    assert c["gain"] == pytest.approx(1 / np.sqrt(1 + c["eps"] ** 2))
+    assert c["N_real"] - (c["N"] - 1) < 0.1                               # "logo acima de um inteiro"
+    assert c["att_lower"] < c["As"] <= c["att_ws"]
+    w = np.linspace(0, o["spec"].wp, 200001)
+    d = np.diff(np.abs(ia.frequency_response(o["proto"], w)))
+    assert int(np.sum(np.sign(d[1:]) != np.sign(d[:-1]))) + 2 == c["Np1"]  # N+1 extremos
+
+
+def test_every_exercise_errata_item_is_shown_on_its_page():
+    """Cada item da errata ligado a um exercício aparece na página desse exercício."""
+    by_number = {registry.load(e.id).CONTENT.number: set(registry.load(e.id).CONTENT.errata) for e in registry.EXERCISES}
+    for item in errata_items().values():
+        if item.exercise in by_number:
+            assert item.id in by_number[item.exercise], f"{item.id} ({item.exercise}) não citado"

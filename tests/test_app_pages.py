@@ -6,7 +6,9 @@ import pytest
 from streamlit.testing.v1 import AppTest
 
 APP = Path(__file__).resolve().parents[1] / "app"
-PAGES = ["pages/apresentacao.py", "pages/introducao.py", "pages/p7_13.py", "pages/p8_13.py"]
+EXERCISES = ["p7_09", "p7_10", "p7_11", "p7_12", "p7_13", "p7_14", "p7_15", "p7_16",
+             "p8_12", "p8_13", "p8_14", "p8_15"]
+PAGES = ["pages/apresentacao.py", "pages/introducao.py"] + [f"pages/{e}.py" for e in EXERCISES]
 
 
 def _texts(at):
@@ -28,12 +30,12 @@ def test_navigation_entrypoint_runs():
     assert not at.exception, at.exception
 
 
-@pytest.mark.parametrize("page, expected", [
-    ("pages/p7_13.py", ["PASSO 9", "Correção", "Explore"]),
-    ("pages/p8_13.py", ["PASSO 7", "Correção", "Explore"]),
-])
-def test_exercise_page_has_all_sections(page, expected):
-    at = AppTest.from_file(str(APP / page), default_timeout=60).run()
+@pytest.mark.parametrize("ex", EXERCISES)
+def test_exercise_page_has_all_sections(ex):
+    from content import registry
+    C = registry.load(ex).CONTENT
+    expected = [f"PASSO {len(C.steps)}", "Explore"] + (["Correção"] if C.errata else [])
+    at = AppTest.from_file(str(APP / f"pages/{ex}.py"), default_timeout=60).run()
     headers = [h.value for h in at.header]
     for i, name in enumerate(["Enunciado original", "O que está sendo pedido", "Dados e especificações",
                               "Fundamentação teórica", "Equações e variáveis", "Resolução passo a passo",

@@ -80,3 +80,5 @@ figcaption { font-size: 8.8pt; color: #444; margin-top: 3pt; }
 
 /* Referências */
 .refs li { margin-bottom: 5pt; } .refnote { display: block; font-size: 8.8pt; color: #5a5953; }
+
+.toc-end { color: #fff; font-size: 1pt; line-height: 1pt; }

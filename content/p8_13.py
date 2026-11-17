@@ -32,6 +32,7 @@ def objects() -> dict:
         "cascade": p8_13.cascade_form(proto),
         "report": p8_13.validate(proto),
         "lower": butterworth_of_order(proto.N - 1, SPEC.wp, SPEC.rp_db),
+        "pole_curve": ("circle", proto.params["Omega_c"]),
     }
 
 

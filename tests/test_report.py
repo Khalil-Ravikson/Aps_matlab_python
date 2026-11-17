@@ -11,6 +11,7 @@ from report import build_report as R
 @pytest.fixture(scope="module")
 def doc():
     html, toc = R.document(["p7_13", "p8_13"])
+    html = html.replace("\x01", "")
     return html, toc
 
 

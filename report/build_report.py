@@ -102,24 +102,29 @@ def svg(fig) -> str:
     return s[s.index("<svg"):]
 
 
-# ── Figuras complementares (Matplotlib) ─────────────────────────────────────
+# ── Figuras complementares (Matplotlib), guiadas pelos dados de content.objects() ──
 
-def fig_compare_p7_13(objs) -> str:
+STANDARD = {"impulse", "amplitude", "db", "passband", "magnitude", "phase", "group_delay"}
+
+
+def _ax(figsize=(7.5, 3.2)):
+    fig, ax = plt.subplots(figsize=figsize, constrained_layout=True)
+    return fig, ax
+
+
+def fig_compare(objs) -> str:
     from dsp_av2.fir import analysis
-    spec, est, fin = objs["spec"], objs["estimate"], objs["final"]
-    band = spec.stopbands[0]
+    c, spec = objs["compare"], objs["spec"]
+    band = c["band"]
     w = analysis.frequency_grid(spec.edges, analysis.DENSE_GRID_POINTS)
     m = (w >= (band.lo - 0.03) * np.pi) & (w <= (band.hi + 0.03) * np.pi)
-    fig, ax = plt.subplots(figsize=(7.5, 3.2), constrained_layout=True)
-    for d, color, label in ((est, plotting.LIMIT if False else "#eb6834", f"estimativa M = {est.M}"),
-                            (fin, plotting.SERIES, f"mínimo M = {fin.M}")):
-        ax.plot(w[m] / np.pi, np.abs(analysis.frequency_response(d.h, w[m])), color=color, lw=1.5, label=label)
-    ax.axhline(band.delta, color=plotting.LIMIT, ls="--", lw=1)
-    ax.annotate(f"limite δ₂ = {band.delta:g}", xy=(1, band.delta), xycoords=("axes fraction", "data"),
-                xytext=(-4, 3), textcoords="offset points", ha="right", fontsize=8, color=plotting.LIMIT)
+    fig, ax = _ax()
+    for (label, h), color in zip(c["designs"].items(), ("#eb6834", plotting.SERIES)):
+        ax.plot(w[m] / np.pi, np.abs(analysis.frequency_response(h, w[m])), color=color, lw=1.5, label=label)
+    ax.axhline(c["limit"], color=plotting.LIMIT, ls="--", lw=1)
     for e in (band.lo, band.hi):
         ax.axvline(e, color=plotting.LIMIT, ls=":", lw=1)
-    ax.set_ylim(0, 2.2 * band.delta)
+    ax.set_ylim(0, 2.2 * c["limit"])
     ax.set_xlabel("ω / π")
     ax.set_ylabel("|H(e^jω)|")
     ax.legend(frameon=False, fontsize=8, loc="upper center", ncol=2)
@@ -127,38 +132,114 @@ def fig_compare_p7_13(objs) -> str:
     return svg(fig)
 
 
-def fig_poles(objs) -> str:
-    p = objs["proto"].p
-    r = np.max(np.abs(p))
-    fig, ax = plt.subplots(figsize=(5.2, 4.6), constrained_layout=True)
-    th = np.linspace(np.pi / 2, 3 * np.pi / 2, 200)
-    ax.plot(r * np.cos(th) / 1e3, r * np.sin(th) / 1e3, ls=":", color=plotting.LIMIT, lw=1)
-    for q in p:
-        ax.plot([0, q.real / 1e3], [0, q.imag / 1e3], color="#dddad2", lw=0.8)
-        ang = 180 - abs(np.degrees(np.angle(q)))
-        if q.imag >= 0:
-            ax.annotate(f"{ang:.0f}°", (q.real / 1e3, q.imag / 1e3), xytext=(-18, 4), textcoords="offset points",
-                        fontsize=7, color=plotting.LIMIT)
-    ax.plot(p.real / 1e3, p.imag / 1e3, "x", color=plotting.SERIES, ms=9, mew=2)
-    ax.axhline(0, color=plotting.LIMIT, lw=0.8)
-    ax.axvline(0, color=plotting.LIMIT, lw=0.8)
-    ax.set_aspect("equal")
-    ax.set_xlim(-1.15 * r / 1e3, 0.25 * r / 1e3)
-    ax.set_xlabel("σ = Re(s)  (×10³ rad/s)")
-    ax.set_ylabel("Im(s)  (×10³ rad/s)")
+def fig_scan(d) -> str:
+    x, y = np.asarray(d["x"]), np.asarray(d["y"], float)
+    ok = (y >= d["limit"]) if d["better"] == "above" else (y <= d["limit"])
+    fig, ax = _ax((7.5, 3.0))
+    ax.plot(x, y, color="#cfccc4", lw=1.2)
+    if ok.any():
+        ax.plot(x[ok], y[ok], "o", color="#0f7a5a", ms=6, label="atende")
+    if (~ok).any():
+        ax.plot(x[~ok], y[~ok], "x", color="#b3261e", ms=7, mew=2, label="não atende")
+    ax.axhline(d["limit"], color=plotting.LIMIT, ls="--", lw=1)
+    if d.get("highlight") is not None:
+        ax.axvline(d["highlight"], color=plotting.SERIES, ls=":", lw=1.2)
+    ax.set_xlabel(d["xlabel"])
+    ax.set_ylabel(d["ylabel"])
+    ax.legend(frameon=False, fontsize=8)
     plotting._style(ax)
     return svg(fig)
 
 
-def figures_for(ex_id: str, mod, objs) -> dict[str, str]:
-    """Figuras do relatório: a figura-resumo do exercício e as complementares."""
-    if ex_id == "p7_13":
-        overview = svg(mod_ex(ex_id).plot(objs["final"]))
-        return {"impulse": overview, "amplitude": None, "db": None, "compare": fig_compare_p7_13(objs)}
-    if ex_id == "p8_13":
-        overview = svg(mod_ex(ex_id).plot(objs["proto"]))
-        return {"poles": fig_poles(objs), "magnitude": overview, "db": None, "group_delay": None, "impulse": None}
-    raise KeyError(ex_id)
+def fig_overlay(d) -> str:
+    from dsp_av2.fir import analysis
+    w = np.linspace(d["xlim"][0] * np.pi, d["xlim"][1] * np.pi, 6001)
+    fig, ax = _ax()
+    for (label, h), color in zip(d["curves"].items(), (plotting.SERIES, "#eb6834", "#1baf7a")):
+        H = analysis.frequency_response(h, w)
+        with np.errstate(divide="ignore"):
+            db = analysis.magnitude_db(H) if d.get("normalized") else 20 * np.log10(np.abs(H))
+        ax.plot(w / np.pi, db, color=color, lw=1.4, label=label)
+    if d.get("limit_db") is not None:
+        ax.axhline(d["limit_db"], color=plotting.LIMIT, ls="--", lw=1)
+    for e in d.get("edges", []):
+        ax.axvline(e, color=plotting.LIMIT, ls=":", lw=1)
+    ax.set_ylim(*d["ylim"])
+    ax.set_xlim(*d["xlim"])
+    ax.set_xlabel("ω / π")
+    ax.set_ylabel("|H| (dB)")
+    if len(d["curves"]) > 1:
+        ax.legend(frameon=False, fontsize=8)
+    plotting._style(ax)
+    return svg(fig)
+
+
+def fig_bars(d) -> str:
+    cats = d["categories"]
+    x = np.arange(len(cats))
+    n = len(d["series"])
+    width = 0.8 / n
+    fig, ax = _ax((7.0, 3.0))
+    for k, ((label, vals), color) in enumerate(zip(d["series"].items(), ("#9fbfe6", plotting.SERIES, "#eb6834"))):
+        bars = ax.bar(x + (k - (n - 1) / 2) * width, vals, width, label=label, color=color)
+        ax.bar_label(bars, fontsize=8)
+    ax.set_xticks(x, cats)
+    ax.set_ylabel(d["ylabel"])
+    ax.legend(frameon=False, fontsize=8)
+    plotting._style(ax)
+    return svg(fig)
+
+
+def fig_poles(objs) -> str:
+    p = objs["proto"].p
+    r = np.max(np.abs(p))
+    curve = objs.get("pole_curve") or ("circle", r)
+    ax_r, ax_i = (curve[1], curve[1]) if curve[0] == "circle" else (curve[1], curve[2])
+    sc = 1e3 if r > 1e3 else 1.0
+    unit = "×10³ rad/s" if sc > 1 else "rad/s"
+    fig, ax = plt.subplots(figsize=(5.2, 4.6), constrained_layout=True)
+    th = np.linspace(np.pi / 2, 3 * np.pi / 2, 200)
+    ax.plot(ax_r * np.cos(th) / sc, ax_i * np.sin(th) / sc, ls=":", color=plotting.LIMIT, lw=1)
+    for q in p:
+        ax.plot([0, q.real / sc], [0, q.imag / sc], color="#dddad2", lw=0.8)
+    ax.plot(p.real / sc, p.imag / sc, "x", color=plotting.SERIES, ms=9, mew=2)
+    ax.axhline(0, color=plotting.LIMIT, lw=0.8)
+    ax.axvline(0, color=plotting.LIMIT, lw=0.8)
+    ax.set_aspect("equal")
+    xr = max(ax_r, np.max(-p.real))
+    ax.set_xlim(-1.25 * xr / sc, 0.35 * xr / sc)
+    ax.set_ylim(-1.1 * r / sc, 1.1 * r / sc)
+    ax.set_xlabel(f"σ = Re(s)  ({unit})")
+    ax.set_ylabel(f"Im(s)  ({unit})")
+    plotting._style(ax)
+    return svg(fig)
+
+
+def figures_for(ex_id: str, objs) -> dict[str, str]:
+    """Figura de cada chave: a figura-resumo do exercício entra uma vez (na 1ª chave padrão)."""
+    mod = registry.load(ex_id)
+    out, overview_done = {}, False
+    for f in mod.CONTENT.figures:
+        k = f.key
+        if k in STANDARD:
+            if not overview_done:
+                out[k] = svg(mod_ex(ex_id).plot(objs.get("final") or objs["proto"]))
+                overview_done = True
+            else:
+                out[k] = None
+        elif k == "poles":
+            out[k] = fig_poles(objs)
+        elif k == "compare":
+            out[k] = fig_compare(objs)
+        elif k.startswith("scan"):
+            out[k] = fig_scan(objs[k])
+        elif k.startswith("overlay"):
+            out[k] = fig_overlay(objs[k])
+        elif k.startswith("bars"):
+            out[k] = fig_bars(objs[k])
+        else:
+            raise KeyError(f"figura sem versão Matplotlib: {ex_id}/{k}")
+    return out
 
 
 def mod_ex(ex_id: str):
@@ -222,14 +303,15 @@ def exercise_html(ex_id: str, chap_no: int, toc: list) -> str:
     roles = "".join(f"<tr><td><code>{r.function}</code></td><td>{html.escape(r.role)}</td></tr>" for r in C.code_roles)
     h.append(sec(7) + md(fill(C.implementation, ctx))
              + f"<table class='vars'><tr><th>Função</th><th>O que faz</th></tr>{roles}</table>")
-    figs = figures_for(ex_id, mod, objs)
+    figs = figures_for(ex_id, objs)
     parts = [sec(8)]
     nfig = 0
     for f in C.figures:
         img = figs.get(f.key)
         if img:
             nfig += 1
-            cap = "Figura-resumo do exercício (Matplotlib)" if f.key in ("impulse", "magnitude") else fill(f.title, ctx)
+            cap = ("Figura-resumo do exercício: gráficos pedidos pelo enunciado" if f.key in STANDARD
+                   else fill(f.title, ctx))
             parts.append(f'<figure>{img}<figcaption>Figura {chap_no}.{nfig}: {md(cap)[3:-4]}</figcaption></figure>')
         parts.append(f'<h3>{md(fill(f.title, ctx))[3:-4]}</h3>{md(fill(f.reading, ctx))}')
     h.append("".join(parts))
@@ -247,7 +329,11 @@ def exercise_html(ex_id: str, chap_no: int, toc: list) -> str:
     return "\n".join(h)
 
 
-def document(ex_ids: list[str], toc_pages: dict[str, int] | None = None) -> str:
+TOC_END = "FIMDOSUMARIO"
+
+
+def document(ex_ids: list[str]) -> tuple[str, list]:
+    """HTML completo; os números de página do sumário ficam como marcadores \\x01i\\x01."""
     toc: list[tuple[int, str]] = []
     P = common.PROJECT
     cover = f"""
@@ -283,9 +369,10 @@ def document(ex_ids: list[str], toc_pages: dict[str, int] | None = None) -> str:
 
     toc_rows = "".join(
         f'<div class="toc-l{lvl}"><a href="#t{i}">{html.escape(t)}</a><span class="dots"></span>'
-        f'<span class="pg">{(toc_pages or {}).get(t, "")}</span></div>'
+        f'<span class="pg">\x01{i}\x01</span></div>'
         for i, (lvl, t) in enumerate(toc, 1))
-    toc_html = f'<section class="toc"><h1 class="toc-h">Sumário</h1>{toc_rows}</section>'
+    toc_html = (f'<section class="toc"><h1 class="toc-h">Sumário</h1>{toc_rows}'
+                f'<div class="toc-end">{TOC_END}</div></section>')
     return (f"<!doctype html><html lang='pt-BR'><head><meta charset='utf-8'><title>{P['app_name']} — Relatório</title>"
             f"<style>{CSS}</style></head><body>{cover}{toc_html}{''.join(body)}</body></html>"), toc
 
@@ -303,10 +390,11 @@ def _norm(s: str) -> str:
     return re.sub(r"\s+", "", s)
 
 
-def locate(pdf_path: Path, titles: list[str], skip_pages: int = 2) -> dict[str, int]:
-    """Página (1-based) da primeira ocorrência de cada título, após capa e sumário."""
+def locate(pdf_path: Path, titles: list[str]) -> dict[str, int]:
+    """Página (1-based) da primeira ocorrência de cada título, depois do fim do sumário."""
     pages = [_norm(p.extract_text() or "") for p in PdfReader(str(pdf_path)).pages]
-    found, start = {}, skip_pages
+    start = next(i for i, p in enumerate(pages) if TOC_END in p) + 1
+    found = {}
     for t in titles:
         key = _norm(t)[:40]
         for i in range(start, len(pages)):
@@ -320,16 +408,15 @@ def locate(pdf_path: Path, titles: list[str], skip_pages: int = 2) -> dict[str, 
 def build(out: Path = OUT_DEFAULT, ex_ids: list[str] | None = None) -> Path:
     ex_ids = ex_ids or [e.id for e in registry.EXERCISES if registry.has_content(e.id)]
     out.parent.mkdir(parents=True, exist_ok=True)
+    html_doc, toc = document(ex_ids)
     with tempfile.TemporaryDirectory() as tmp:
         tmp = Path(tmp)
-        html1, toc = document(ex_ids)
-        (tmp / "r.html").write_text(html1, encoding="utf-8")
+        (tmp / "r.html").write_text(re.sub("\x01\\d+\x01", "000", html_doc), encoding="utf-8")
         print_pdf(tmp / "r.html", tmp / "pass1.pdf")
-        n_toc_pages = -(-len(toc) // 36)  # teto: ~36 linhas de sumário por página
-        pages = locate(tmp / "pass1.pdf", [t for _, t in toc], skip_pages=1 + n_toc_pages)
-        html2, _ = document(ex_ids, pages)
-        out.with_suffix(".html").write_text(html2, encoding="utf-8")
-        print_pdf(out.with_suffix(".html"), out)
+        pages = locate(tmp / "pass1.pdf", [t for _, t in toc])
+    final = re.sub("\x01(\\d+)\x01", lambda m: str(pages.get(toc[int(m.group(1)) - 1][1], "")), html_doc)
+    out.with_suffix(".html").write_text(final, encoding="utf-8")
+    print_pdf(out.with_suffix(".html"), out)
     missing = [t for _, t in toc if t not in pages]
     if missing:
         print("aviso: títulos não localizados no PDF:", missing)

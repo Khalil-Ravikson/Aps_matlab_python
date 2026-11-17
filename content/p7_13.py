@@ -35,6 +35,8 @@ def objects() -> dict:
         "search_reports": {M: validate_fir_tolerance(design_kaiser(SPEC, M=M)) for M, _ in search.tried},
         "final": final,
         "final_report": p7_13.validate(final),
+        "compare": {"designs": {f"estimativa M = {est.M}": est.h, f"mínimo M = {final.M}": final.h},
+                    "band": SPEC.stopbands[0], "limit": SPEC.stopbands[0].delta},
     }
 
 
@@ -90,7 +92,7 @@ CONTENT = ExerciseContent(
         Value(r"A_s", "[[As:.2f]] dB", "calculado", "atenuação de projeto"),
         Value(r"M_{\text{est}}", "[[M_est]]", "calculado", "estimativa de Kaiser: não atende"),
     ),
-    errata=("E1",),
+    errata=("E1", "V4"),
     result_keys=("M", "M_est", "beta", "As", "dev_stop", "est_dev_stop"),
 
     # 2 ──────────────────────────────────────────────────────────────────────
