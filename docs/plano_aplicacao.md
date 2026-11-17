@@ -1,6 +1,6 @@
 # Plano — DSP Filter Lab (aplicação web educacional)
 
-**Data:** 2026-11-14 · **Status:** proposta, aguardando aprovação (nenhum código da aplicação escrito)
+**Data:** 2026-11-14 · **Status:** concluído. Etapas 0 a 7 implementadas (12 exercícios, páginas de análise, relatório, testes)
 **Base:** commit `70c8e0c` (12 exercícios, 181 testes passando)
 
 ---
@@ -140,3 +140,11 @@ Proponho que os resultados oficiais sejam fixos (os do projeto) e que cada exerc
 | 7 | README, `requirements.txt`, execução completa dos testes e validação dos 12 exercícios | `pytest` verde; app e PDF regeneráveis com um comando |
 
 Pilotos escolhidos: **P7.13** (o caso mais didático, em que a fórmula falha e a busca corrige) e **P8.13** (cascata com correção da errata).
+
+---
+
+## 6. Registro de execução
+
+- **2026-11-14:** Etapas 0 e 1 e pilotos P7.13 e P8.13 (commit `29251ec`).
+- **2026-11-16:** os outros 10 exercícios (commit `c62f159`).
+- **2026-11-16:** Etapa 5 (Comparação FIR × IIR, Validação, Referências e metodologia) na aplicação e no relatório; testes das seções de análise.

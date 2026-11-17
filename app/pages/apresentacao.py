@@ -34,6 +34,14 @@ for col, chapter, color, label in ((c7, 7, FIR_ACCENT, "Capítulo 7 — FIR Filt
             else:
                 st.markdown(f"<span style='color:#8a8880'>{label} <i>(em breve)</i></span>", unsafe_allow_html=True)
 
+st.header("Análise", anchor="analise")
+for page, label in (("fir_vs_iir", "Comparação FIR × IIR"), ("validacao", "Validação dos resultados"),
+                    ("referencias", "Referências e metodologia")):
+    try:
+        st.page_link(f"pages/{page}.py", label=label, icon=":material/arrow_forward:")
+    except StreamlitPageNotFoundError:  # página executada fora da navegação (testes)
+        st.markdown(f"→ [{label}](/{page})")
+
 st.header("Metodologia em uma página", anchor="metodologia")
 st.markdown(METHOD_SUMMARY)
 st.markdown("**Origem dos valores.** Cada número das resoluções traz um rótulo:")

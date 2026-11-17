@@ -92,7 +92,7 @@ No Windows, troque `.venv/bin/` por `.venv\Scripts\` em todos os comandos deste 
 .venv/bin/python -m pytest -q
 ```
 
-O resultado esperado é `295 passed`.
+O resultado esperado é `308 passed`.
 
 ---
 
@@ -110,7 +110,8 @@ Abra **http://localhost:8501** no navegador. A barra lateral organiza o conteúd
 
 - **Início:** apresentação do projeto e introdução ao projeto de filtros digitais;
 - **Capítulo 7 (FIR):** P7.9 a P7.16;
-- **Capítulo 8 (IIR):** P8.12 a P8.15.
+- **Capítulo 8 (IIR):** P8.12 a P8.15;
+- **Análise:** comparação entre FIR e IIR, validação dos resultados, e referências e metodologia.
 
 Cada exercício tem a mesma estrutura de 10 seções:
 
@@ -147,6 +148,7 @@ A suíte cobre:
 | Conteúdo | Todo número do texto vem do cálculo; as afirmações do texto são verdadeiras; a errata concorda com os cálculos |
 | Interface | Todas as páginas da aplicação abrem sem erro e contêm as 10 seções |
 | Relatório | O documento é gerado sem marcadores pendentes e com as equações convertidas |
+| Análise | As afirmações das seções de comparação e validação conferem com os cálculos |
 
 ### 3. Scripts dos exercícios
 

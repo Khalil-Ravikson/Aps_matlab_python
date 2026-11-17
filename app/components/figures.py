@@ -323,3 +323,29 @@ def build(ex_id: str, key: str, objs: dict) -> go.Figure:
         if key == "passband":
             return fir_passband(w, db, spec.passbands, spec.rp_db)
     raise KeyError(f"figura não definida: {ex_id}/{key}")
+
+
+def lines_chart(d: dict) -> go.Figure:
+    """Várias curvas sobre o mesmo eixo x (dados já calculados)."""
+    fig = go.Figure()
+    colors = (SERIES, SERIES2, "#1baf7a", "#4a3aa7")
+    for (label, y), color in zip(d["curves"].items(), colors):
+        fig.add_trace(go.Scatter(x=d["x"], y=y, mode="lines", name=label, line=dict(color=color, width=2),
+                                 hovertemplate=f"{label}<br>%{{x:.4f}}<br>%{{y:.3f}}<extra></extra>"))
+    for y, text in d.get("hlines", []):
+        _hline(fig, y, text)
+    _vlines(fig, d.get("vlines", []))
+    if d.get("ylim"):
+        fig.update_yaxes(range=list(d["ylim"]))
+    fig = _base(fig, d["xlabel"], d["ylabel"], height=400)
+    fig.update_layout(showlegend=True, margin=dict(t=80), legend=dict(orientation="h", y=1.18, x=0))
+    return fig
+
+
+def from_data(key: str, data: dict) -> go.Figure:
+    """Figura de uma seção de análise, escolhida pelo prefixo da chave."""
+    if key.startswith("bars"):
+        return bars_chart(data)
+    if key.startswith("lines"):
+        return lines_chart(data)
+    raise KeyError(f"figura de análise desconhecida: {key}")

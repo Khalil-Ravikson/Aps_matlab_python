@@ -8,7 +8,8 @@ from streamlit.testing.v1 import AppTest
 APP = Path(__file__).resolve().parents[1] / "app"
 EXERCISES = ["p7_09", "p7_10", "p7_11", "p7_12", "p7_13", "p7_14", "p7_15", "p7_16",
              "p8_12", "p8_13", "p8_14", "p8_15"]
-PAGES = ["pages/apresentacao.py", "pages/introducao.py"] + [f"pages/{e}.py" for e in EXERCISES]
+PAGES = (["pages/apresentacao.py", "pages/introducao.py", "pages/fir_vs_iir.py", "pages/validacao.py",
+          "pages/referencias.py"] + [f"pages/{e}.py" for e in EXERCISES])
 
 
 def _texts(at):

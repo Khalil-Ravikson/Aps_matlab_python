@@ -39,16 +39,6 @@ def _exercise_page(e: registry.Entry) -> st.Page:
     return st.Page(_pending_page(e.id), title=f"{title}  (em breve)", url_path=e.id)
 
 
-def _analysis_pending(name: str, slug: str):
-    def page():
-        from app.components.style import inject_css
-        inject_css()
-        st.title(name)
-        st.info("Seção prevista na Etapa 5 do plano (docs/plano_aplicacao.md), após a aprovação dos pilotos.")
-    page.__name__ = f"analysis_{slug}"
-    return st.Page(page, title=f"{name}  (em breve)", url_path=slug)
-
-
 nav = st.navigation({
     "Início": [
         st.Page(str(PAGES_DIR / "apresentacao.py"), title="Apresentação", icon=":material/home:", default=True),
@@ -57,9 +47,12 @@ nav = st.navigation({
     "Capítulo 7 — FIR": [_exercise_page(e) for e in registry.EXERCISES if e.chapter == 7],
     "Capítulo 8 — IIR": [_exercise_page(e) for e in registry.EXERCISES if e.chapter == 8],
     "Análise": [
-        _analysis_pending("Comparação FIR × IIR", "fir_vs_iir"),
-        _analysis_pending("Validação dos resultados", "validacao"),
-        _analysis_pending("Referências e metodologia", "referencias"),
+        st.Page(str(PAGES_DIR / "fir_vs_iir.py"), title="Comparação FIR × IIR", icon=":material/compare_arrows:",
+                url_path="fir_vs_iir"),
+        st.Page(str(PAGES_DIR / "validacao.py"), title="Validação dos resultados", icon=":material/fact_check:",
+                url_path="validacao"),
+        st.Page(str(PAGES_DIR / "referencias.py"), title="Referências e metodologia", icon=":material/library_books:",
+                url_path="referencias"),
     ],
 })
 nav.run()

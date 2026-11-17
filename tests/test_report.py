@@ -28,7 +28,7 @@ def test_all_sections_in_toc(doc):
     titles = [t for _, t in toc]
     for sec in R.SECTION_TITLES:
         assert any(t.endswith(sec) for t in titles), sec
-    assert titles[-1].endswith("Referências")
+    assert titles[-1].endswith("Referências e limitações")
 
 
 def test_equations_and_figures_present(doc):
@@ -52,3 +52,13 @@ def test_pdf_builds_with_numbered_toc(tmp_path):
     assert len(pages) > 8
     toc_text = pages[1].extract_text()
     assert re.search(r"Introdução ao projeto de filtros digitais\s*\d+", toc_text)
+
+
+def test_analysis_chapters_render_in_report():
+    from content import analysis
+    for blocks in (analysis.comparison_blocks(), analysis.validation_blocks(), analysis.methodology_blocks()):
+        out = R.blocks_html(blocks, 15, [0])
+        assert "[[" not in out
+        text = re.sub(r"<math.*?</math>", "", out, flags=re.S)
+        text = re.sub(r"<(style|svg)\b.*?</\1>", "", text, flags=re.S)
+        assert "$" not in text

@@ -190,6 +190,37 @@ def fig_bars(d) -> str:
     return svg(fig)
 
 
+def fig_lines(d) -> str:
+    fig, ax = _ax((7.5, 3.4))
+    for (label, y), color in zip(d["curves"].items(), (plotting.SERIES, "#eb6834", "#1baf7a", "#4a3aa7")):
+        ax.plot(d["x"], y, color=color, lw=1.4, label=label)
+    for y, _ in d.get("hlines", []):
+        ax.axhline(y, color=plotting.LIMIT, ls="--", lw=1)
+    for e in d.get("vlines", []):
+        ax.axvline(e, color=plotting.LIMIT, ls=":", lw=1)
+    if d.get("ylim"):
+        ax.set_ylim(*d["ylim"])
+    ax.set_xlabel(d["xlabel"])
+    ax.set_ylabel(d["ylabel"])
+    ax.legend(frameon=False, fontsize=7.5, ncol=2)
+    plotting._style(ax)
+    return svg(fig)
+
+
+def blocks_html(blocks, chap_no: int, fig_counter: list) -> str:
+    """Seções de análise: Markdown e figuras (mesmos blocos da aplicação)."""
+    out = []
+    for b in blocks:
+        if b.kind == "md":
+            out.append(md(b.text.replace("\n## ", "\n### ")))
+        else:
+            fig_counter[0] += 1
+            img = fig_bars(b.data) if b.key.startswith("bars") else fig_lines(b.data)
+            out.append(f'<figure>{img}<figcaption>Figura {chap_no}.{fig_counter[0]}: {html.escape(b.title)}. '
+                       f'{md(b.text)[3:-4]}</figcaption></figure>')
+    return "".join(out)
+
+
 def fig_poles(objs) -> str:
     p = objs["proto"].p
     r = np.max(np.abs(p))
@@ -355,17 +386,28 @@ def document(ex_ids: list[str]) -> tuple[str, list]:
     toc.append((1, "1. Introdução ao projeto de filtros digitais"))
     body.append(f'<section class="chapter"><h1 id="t{len(toc)}">1. Introdução ao projeto de filtros digitais</h1>'
                 + md(common.PRESENTATION) + md(common.INTRODUCTION.replace("## ", "### ")) + "</section>")
+    from content import analysis
+    meth = analysis.methodology_blocks()
     toc.append((1, "2. Metodologia"))
     legend = "".join(f"<li>{badge(k)}</li>" for k in KINDS)
-    body.append(f'<section class="chapter"><h1 id="t{len(toc)}">2. Metodologia</h1>' + md(common.METHOD_SUMMARY)
+    body.append(f'<section class="chapter"><h1 id="t{len(toc)}">2. Metodologia</h1>' + blocks_html(meth[:1], 2, [0])
                 + f"<p>Cada número das resoluções traz um rótulo de origem:</p><ul class='legend'>{legend}</ul>"
-                + md(common.DTA_NOTE) + "</section>")
+                + blocks_html(meth[1:3], 2, [0]) + "</section>")
     for n, ex_id in enumerate(ex_ids, start=3):
         body.append(exercise_html(ex_id, n, toc))
-    toc.append((1, f"{len(ex_ids) + 3}. Referências"))
-    refs = "".join(f"<li>{md(r)[3:-4]} <span class='refnote'>{n}</span></li>" for r, n in common.REFERENCES)
-    body.append(f'<section class="chapter"><h1 id="t{len(toc)}">{len(ex_ids) + 3}. Referências</h1>'
-                f"<ol class='refs'>{refs}</ol>{md(common.DTA_NOTE)}</section>")
+    n = len(ex_ids) + 3
+    if len(ex_ids) == len(registry.EXERCISES):   # seções de análise exigem os 12 exercícios
+        for title, blocks in (("Comparação FIR × IIR", analysis.comparison_blocks()),
+                              ("Validação dos resultados", analysis.validation_blocks())):
+            toc.append((1, f"{n}. {title}"))
+            body.append(f'<section class="chapter"><h1 id="t{len(toc)}">{n}. {title}</h1>'
+                        + blocks_html(blocks, n, [0]) + "</section>")
+            n += 1
+    toc.append((1, f"{n}. Referências e limitações"))
+    refs = "".join(f"<li>{md(r)[3:-4]} <span class='refnote'>{note}</span></li>" for r, note in common.REFERENCES)
+    lim = meth[3].text.split("## Limitações", 1)[1]
+    body.append(f'<section class="chapter"><h1 id="t{len(toc)}">{n}. Referências e limitações</h1>'
+                f"<ol class='refs'>{refs}</ol>{md(common.DTA_NOTE)}<h2>Limitações</h2>{md(lim)}</section>")
 
     toc_rows = "".join(
         f'<div class="toc-l{lvl}"><a href="#t{i}">{html.escape(t)}</a><span class="dots"></span>'
